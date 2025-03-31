@@ -24,11 +24,10 @@ public class SplashScreenW extends JFrame {
         buttonPanel.add(tryItNowButton);
         panel.add(buttonPanel, BorderLayout.SOUTH);
 
-        // Navigate to the Login Page when the button is clicked.
         tryItNowButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new LoginPage();
+                new MainPage();
             }
         });
 

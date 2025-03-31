@@ -15,7 +15,7 @@ public class GraphWindow extends JFrame {
         exportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                graphPanel.exportToImage(); // Call the export method on button click
+                graphPanel.exportToImage(); 
             }
         });
 

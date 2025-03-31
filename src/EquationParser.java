@@ -64,7 +64,6 @@ public class EquationParser {
     }
 
     public static Equation parseMatrixEquation(String input) throws EquationParseException {
-        // Split input into lines.
         String[] lines = input.split("\\n");
         if (lines.length < 2) {
             throw new EquationParseException("Matrix equation input must contain two lines: first for matrix A and second for vector B.");
@@ -72,7 +71,6 @@ public class EquationParser {
         String matrixLine = lines[0].trim();
         String vectorLine = lines[1].trim();
         
-        // Parse matrix A: rows separated by semicolons, numbers separated by spaces.
         String[] rowStrings = matrixLine.split(";");
         int n = rowStrings.length;
         double[][] A = new double[n][n];
@@ -90,7 +88,6 @@ public class EquationParser {
             }
         }
         
-        // Parse vector B: numbers separated by spaces.
         String[] tokensB = vectorLine.split("\\s+");
         if (tokensB.length != n) {
             throw new EquationParseException("Vector B must have " + n + " elements, but found " + tokensB.length + ".");

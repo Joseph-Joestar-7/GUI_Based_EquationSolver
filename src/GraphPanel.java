@@ -131,10 +131,17 @@ public class GraphPanel extends JPanel {
         int tickSize = 5;
         g2.setFont(new Font("SansSerif", Font.PLAIN, 10));
         
-        
+        double baseInterval = 1;
+        while (scale * baseInterval < 50) {
+            baseInterval *= 2;
+        }
+        while (scale * baseInterval > 100) {
+            baseInterval /= 2;
+        }
+    
         double xMin = -(centerX) / scale;
         double xMax = (width - centerX) / scale;
-        for (double x = Math.ceil(xMin); x <= xMax; x++) {
+        for (double x = Math.ceil(xMin / baseInterval) * baseInterval; x <= xMax; x += baseInterval) {
             int screenX = centerX + (int)(x * scale);
             g2.drawLine(screenX, centerY - tickSize, screenX, centerY + tickSize);
             if (Math.abs(x) > 1e-6) {
@@ -146,7 +153,7 @@ public class GraphPanel extends JPanel {
         
         double yMin = -(height - centerY) / scale;
         double yMax = centerY / scale;
-        for (double y = Math.ceil(yMin); y <= yMax; y++) {
+        for (double y = Math.ceil(yMin / baseInterval) * baseInterval; y <= yMax; y += baseInterval) {
             int screenY = centerY - (int)(y * scale);
             g2.drawLine(centerX - tickSize, screenY, centerX + tickSize, screenY);
             if (Math.abs(y) > 1e-6) {
@@ -156,4 +163,5 @@ public class GraphPanel extends JPanel {
             }
         }
     }
+    
 }
