@@ -1,4 +1,3 @@
-// Splash Screen: Displays the project title and a "Try It Now" button.
 
 import javax.swing.*;
 import java.awt.*;

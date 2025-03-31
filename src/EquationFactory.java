@@ -1,4 +1,3 @@
-//Calls Parser based on type
 
 public class EquationFactory {
 

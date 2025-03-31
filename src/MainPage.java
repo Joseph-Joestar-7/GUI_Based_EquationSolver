@@ -1,6 +1,5 @@
 import javax.swing.*;
-import java.awt.*;
-    
+import java.awt.*;   
 import java.awt.event.*;
 
 public class MainPage extends JFrame {
@@ -20,14 +19,12 @@ public class MainPage extends JFrame {
         panel.add(selectLabel);
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
 
-        // Equation type selection.
         String[] equationTypes = { "Polynomial", "Logarithmic", "Transcendental", "Matrix" };
         JComboBox<String> equationTypeBox = new JComboBox<>(equationTypes);
         equationTypeBox.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.add(equationTypeBox);
         panel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        // Panel for method selection if required.
         JPanel subTypePanel = new JPanel();
         subTypePanel.setLayout(new BoxLayout(subTypePanel, BoxLayout.Y_AXIS));
         subTypePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -40,7 +37,6 @@ public class MainPage extends JFrame {
         panel.add(subTypePanel);
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
 
-        // Dynamic sub-option handling.
         equationTypeBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String selected = (String) equationTypeBox.getSelectedItem();
@@ -68,8 +64,6 @@ public class MainPage extends JFrame {
         proceedButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.add(proceedButton);
 
-        // Navigation action placeholder.
-        // In MainPage's proceedButton action listener:
         proceedButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 String selected = (String) equationTypeBox.getSelectedItem();

@@ -1,4 +1,3 @@
-//Class to represent Result of the Equation
 
 public class EquationResult {
     private final String solution;

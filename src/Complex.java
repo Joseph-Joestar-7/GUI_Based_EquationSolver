@@ -1,5 +1,3 @@
-//Helper Class for handling complex no.s
-
 public class Complex {
     private final double real;
     private final double imaginary;

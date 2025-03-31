@@ -13,10 +13,8 @@ public class EquationSolverApp {
                 }
             }
         } catch(Exception e){
-            // If Nimbus is not available, fallback to default.
+            System.err.println("Nimbus Look and Feel not available. Using default Look and Feel.");
         }
-
-        // Launch the GUI.
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 EquationGUI.start();

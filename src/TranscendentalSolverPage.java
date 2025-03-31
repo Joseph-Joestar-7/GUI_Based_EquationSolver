@@ -15,49 +15,42 @@ public class TranscendentalSolverPage extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
-        // Top panel: Input fields.
         JPanel topPanel = new JPanel(new GridBagLayout());
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // f(x) field.
         gbc.gridx = 0; gbc.gridy = 0;
         topPanel.add(new JLabel("f(x):"), gbc);
         equationField = new JTextField("3*x^3 + 10*x^2 + 10*x + 7", 25);
         gbc.gridx = 1;
         topPanel.add(equationField, gbc);
 
-        // x_min field.
         gbc.gridx = 0; gbc.gridy = 1;
         topPanel.add(new JLabel("x_min:"), gbc);
         xMinField = new JTextField("-10", 10);
         gbc.gridx = 1;
         topPanel.add(xMinField, gbc);
 
-        // x_max field.
         gbc.gridx = 0; gbc.gridy = 2;
         topPanel.add(new JLabel("x_max:"), gbc);
         xMaxField = new JTextField("10", 10);
         gbc.gridx = 1;
         topPanel.add(xMaxField, gbc);
 
-        // Step size field.
         gbc.gridx = 0; gbc.gridy = 3;
         topPanel.add(new JLabel("Step:"), gbc);
         stepField = new JTextField("0.1", 10);
         gbc.gridx = 1;
         topPanel.add(stepField, gbc);
 
-        // Tolerance field.
         gbc.gridx = 0; gbc.gridy = 4;
         topPanel.add(new JLabel("Tolerance:"), gbc);
         tolField = new JTextField("1e-6", 10);
         gbc.gridx = 1;
         topPanel.add(tolField, gbc);
 
-        // Method selection dropdown.
         gbc.gridx = 0; gbc.gridy = 5;
         topPanel.add(new JLabel("Select Method:"), gbc);
         methodBox = new JComboBox<>(new String[] {"Bisection", "Regula Falsi", "Newton-Raphson"});
@@ -66,7 +59,6 @@ public class TranscendentalSolverPage extends JFrame {
 
         add(topPanel, BorderLayout.NORTH);
 
-        // Bottom panel: Buttons and output area.
         JPanel bottomPanel = new JPanel(new BorderLayout(5, 5));
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         solveButton = new JButton("Solve");
@@ -85,17 +77,14 @@ public class TranscendentalSolverPage extends JFrame {
 
         add(bottomPanel, BorderLayout.CENTER);
 
-        // Solve button action.
         solveButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 solveTranscendentalEquation();
             }
         });
 
-        // Plot Graph button action.
         plotGraphButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                // Create the equation from input and open GraphWindow for plotting.
                 String expr = equationField.getText().trim();
                 String params = xMinField.getText().trim() + " " +
                                 xMaxField.getText().trim() + " " +
@@ -108,7 +97,6 @@ public class TranscendentalSolverPage extends JFrame {
                         outputArea.setText("Parsed equation is not a TranscendentalEquation.");
                         return;
                     }
-                    // GraphWindow expects an Equation with evaluate(x) implemented.
                     GraphWindow graphWindow = new GraphWindow(eq);
                     graphWindow.setVisible(true);
                 } catch (EquationParseException ex) {
@@ -119,23 +107,17 @@ public class TranscendentalSolverPage extends JFrame {
             }
         });
 
-        // Back button action.
         backButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 dispose();
-                new MainPage(); // Uncomment if you have a MainPage to return to.
+                new MainPage(); 
             }
         });
 
         setVisible(true);
     }
 
-    /**
-     * Gathers the input, calls EquationFactory to create a TranscendentalEquation, 
-     * and then calls the appropriate solving method.
-     */
     private void solveTranscendentalEquation() {
-        // Combine input into a two-line string.
         String expr = equationField.getText().trim();
         String params = xMinField.getText().trim() + " " +
                         xMaxField.getText().trim() + " " +

@@ -20,13 +20,11 @@ public class SolverPage extends JFrame {
         panel.add(promptLabel);
         panel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        // Input field for the equation (you can also use a JTextArea if you prefer)
         JTextField equationInput = new JTextField();
         equationInput.setMaximumSize(new Dimension(500, 30));
         panel.add(equationInput);
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
 
-        // Panel to hold the action buttons (Solve, Plot Graph, Back)
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 5));
 
@@ -58,12 +56,10 @@ public class SolverPage extends JFrame {
         JScrollPane scrollPane = new JScrollPane(resultArea);
         panel.add(scrollPane);
 
-        // Solve button action: parse input, solve the equation and display result.
         solveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String input = equationInput.getText();
                 try {
-                    // Create the Equation based on the type (e.g. Polynomial or Logarithmic)
                     Equation eq = EquationFactory.createEquation(equationType, input);
                     EquationResult result = eq.solve();
                     resultArea.setText(result.toString());
@@ -75,12 +71,10 @@ public class SolverPage extends JFrame {
             }
         });
 
-        // Plot Graph button action: parse input and open a graph window.
         plotGraphButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String input = equationInput.getText();
                 try {
-                    // For this example, we assume that plotting is supported only for Polynomial and Logarithmic types.
                     if ("Matrix".equalsIgnoreCase(equationType)) {
                         JOptionPane.showMessageDialog(SolverPage.this,
                                 "Graphing is not supported for this type",
@@ -105,7 +99,6 @@ public class SolverPage extends JFrame {
             }
         });
 
-        // Back button action: return to the MainPage.
         backButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dispose();

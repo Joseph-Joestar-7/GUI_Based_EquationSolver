@@ -2,7 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class EquationGUI {
-    // Method to set the global font for the application.
     public static void setGlobalFont(Font font) {
         UIManager.put("Label.font", font);
         UIManager.put("Button.font", font);

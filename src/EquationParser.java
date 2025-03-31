@@ -1,4 +1,3 @@
-//Parses Input and returns Equations
 
 import java.util.ArrayList;
 import java.util.List;

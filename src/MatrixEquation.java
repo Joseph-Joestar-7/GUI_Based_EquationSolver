@@ -14,21 +14,15 @@ public class MatrixEquation extends Equation {
         throw new UnsupportedOperationException("Matrix equations cannot be evaluated for a single variable x.");
     }
 
-    /**
-     * Solves the system using Gaussian Elimination.
-     */
     public EquationResult solveGaussian() {
         int n = B.length;
-        // Create copies to avoid modifying original arrays.
         double[][] A_copy = new double[n][n];
         for (int i = 0; i < n; i++) {
             A_copy[i] = Arrays.copyOf(A[i], n);
         }
         double[] B_copy = Arrays.copyOf(B, n);
         
-        // Forward elimination with partial pivoting.
         for (int i = 0; i < n - 1; i++) {
-            // Pivoting: if A_copy[i][i] is zero, swap with a row below.
             if (A_copy[i][i] == 0) {
                 boolean pivotFound = false;
                 for (int k = i + 1; k < n; k++) {
@@ -47,7 +41,6 @@ public class MatrixEquation extends Equation {
                     return new EquationResult("No unique solution (singular matrix encountered).");
                 }
             }
-            // Eliminate entries below pivot.
             for (int j = i + 1; j < n; j++) {
                 double factor = A_copy[j][i] / A_copy[i][i];
                 for (int k = i; k < n; k++) {
@@ -57,7 +50,6 @@ public class MatrixEquation extends Equation {
             }
         }
         
-        // Back substitution.
         double[] X = new double[n];
         if (A_copy[n - 1][n - 1] == 0) {
             return new EquationResult("No unique solution (division by zero encountered).");
@@ -82,12 +74,10 @@ public class MatrixEquation extends Equation {
         return new EquationResult(sb.toString());
     }
 
-    /**
-     * Solves the system using the Jacobi iterative method.
-     */
+
     public EquationResult solveJacobi() {
         int n = B.length;
-        double[] X = new double[n];        // initial guess (all zeros)
+        double[] X = new double[n];        
         double[] newX = new double[n];
         int maxIterations = 1000;
         double tolerance = 1e-6;
@@ -103,7 +93,6 @@ public class MatrixEquation extends Equation {
                 }
                 newX[i] = sum / A[i][i];
             }
-            // Check convergence.
             boolean converged = true;
             for (int i = 0; i < n; i++) {
                 if (Math.abs(newX[i] - X[i]) > tolerance) {
@@ -126,12 +115,9 @@ public class MatrixEquation extends Equation {
         return new EquationResult(sb.toString());
     }
 
-    /**
-     * Solves the system using the Gauss-Seidel iterative method.
-     */
     public EquationResult solveSeidel() {
         int n = B.length;
-        double[] X = new double[n];        // initial guess (all zeros)
+        double[] X = new double[n];        
         double[] prevX = new double[n];
         int maxIterations = 1000;
         double tolerance = 1e-6;
@@ -143,14 +129,12 @@ public class MatrixEquation extends Equation {
                 double sum = B[i];
                 for (int j = 0; j < n; j++) {
                     if (j != i) {
-                        // Use updated X for j < i and previous for j > i.
                         sum -= A[i][j] * ((j < i) ? X[j] : prevX[j]);
                     }
                 }
                 X[i] = sum / A[i][i];
             }
             iter++;
-            // Check convergence.
             boolean converged = true;
             for (int i = 0; i < n; i++) {
                 if (Math.abs(X[i] - prevX[i]) > tolerance) {
@@ -170,10 +154,7 @@ public class MatrixEquation extends Equation {
         }
         return new EquationResult(sb.toString());
     }
-    
-    /**
-     * Default solve() returns the Gaussian elimination solution.
-     */
+
     @Override
     public EquationResult solve() {
         return solveGaussian();

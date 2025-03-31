@@ -8,14 +8,14 @@ public class LogarithmicEquation extends Equation {
     @Override
     public double evaluate(double x) {
         if (x <= 0) {
-            return Double.NaN;  // Indicate that x is outside the domain.
+            return Double.NaN;  
         }
         return Math.log(x) + c;
     }
 
     @Override
     public EquationResult solve() {
-        double x = Math.pow(10, -c); // Solving log(x) + c = 0 => x = 10^(-c)
+        double x = Math.pow(10, -c); 
         return new EquationResult("x = " + x);
     }
 }

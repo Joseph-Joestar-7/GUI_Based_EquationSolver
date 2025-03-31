@@ -1,21 +1,18 @@
 import javax.swing.*;
-
-
-
 import java.awt.*;
 import java.awt.event.*;
 
 public class MatrixSolverPage extends JFrame {
-    private JTextField nField;             // Field for entering number of equations n
-    private JButton createFieldsButton;    // Button to create input fields
-    private JPanel matrixPanel;            // Panel for the matrix input fields
-    private JTextField[][] aFields;        // 2D array for matrix A coefficients
-    private JTextField[] bFields;          // 1D array for vector B constants
-    private JButton solveButton;           // Solve button
-    private JButton backButton;            // Back button
-    private JTextArea outputArea;          // Output area to display result
-    private JScrollPane matrixScrollPane;  // Scroll pane for matrixPanel
-    private JComboBox<String> methodBox;   // Dropdown to select solving method
+    private JTextField nField;             
+    private JButton createFieldsButton;    
+    private JPanel matrixPanel;            
+    private JTextField[][] aFields;        
+    private JTextField[] bFields;         
+    private JButton solveButton;      
+    private JButton backButton;           
+    private JTextArea outputArea;         
+    private JScrollPane matrixScrollPane; 
+    private JComboBox<String> methodBox;   
 
     public MatrixSolverPage() {
         setTitle("Matrix Equation Solver");
@@ -24,7 +21,6 @@ public class MatrixSolverPage extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
-        // Top panel: Enter number of equations n and create fields.
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topPanel.add(new JLabel("Enter the number of equations (n):"));
         nField = new JTextField(5);
@@ -33,17 +29,14 @@ public class MatrixSolverPage extends JFrame {
         topPanel.add(createFieldsButton);
         add(topPanel, BorderLayout.NORTH);
 
-        // Center panel: Matrix input fields.
         matrixPanel = new JPanel(new GridBagLayout());
         matrixScrollPane = new JScrollPane(matrixPanel);
         matrixScrollPane.setPreferredSize(new Dimension(720, 300));
         add(matrixScrollPane, BorderLayout.CENTER);
 
-        // Bottom panel: Method selection, Solve and Back buttons, and output area.
         JPanel bottomPanel = new JPanel(new BorderLayout(5, 5));
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         
-        // Dropdown for selecting solving method.
         methodBox = new JComboBox<>(new String[] {"Gaussian", "Jacobi", "Seidel"});
         buttonPanel.add(new JLabel("Select Method:"));
         buttonPanel.add(methodBox);
@@ -63,7 +56,6 @@ public class MatrixSolverPage extends JFrame {
         bottomPanel.add(outputScrollPane, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
 
-        // Action: Create input fields when requested.
         createFieldsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -71,7 +63,6 @@ public class MatrixSolverPage extends JFrame {
             }
         });
 
-        // Action: Solve button calls EquationFactory and then the appropriate solving method.
         solveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -79,7 +70,6 @@ public class MatrixSolverPage extends JFrame {
             }
         });
 
-        // Back button returns to MainPage.
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -91,9 +81,6 @@ public class MatrixSolverPage extends JFrame {
         setVisible(true);
     }
 
-    /**
-     * Dynamically creates input fields for an n×n matrix A and an n×1 vector B.
-     */
     private void createInputFields() {
         outputArea.setText("");
         matrixPanel.removeAll();
@@ -116,7 +103,6 @@ public class MatrixSolverPage extends JFrame {
         gbc.insets = new Insets(3, 3, 3, 3);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Create input fields for matrix A.
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 gbc.gridx = j * 2;
@@ -128,7 +114,6 @@ public class MatrixSolverPage extends JFrame {
             }
         }
 
-        // Create input fields for vector B.
         for (int i = 0; i < n; i++) {
             gbc.gridx = n * 2;
             gbc.gridy = i;
@@ -142,10 +127,7 @@ public class MatrixSolverPage extends JFrame {
         solveButton.setEnabled(true);
     }
 
-    /**
-     * Collects the input, creates a two-line string, calls EquationFactory,
-     * casts to MatrixEquation, then calls the solving method based on the selected method.
-     */
+
     private void solveMatrixEquation() {
         int n;
         try {
@@ -155,7 +137,6 @@ public class MatrixSolverPage extends JFrame {
             return;
         }
         
-        // Build the first line (matrix A) and second line (vector B).
         StringBuilder matrixBuilder = new StringBuilder();
         for (int i = 0; i < n; i++) {
             StringBuilder rowBuilder = new StringBuilder();
@@ -189,7 +170,6 @@ public class MatrixSolverPage extends JFrame {
             }
         }
         
-        // Combine into a two-line input.
         String input = matrixBuilder.toString() + "\n" + vectorBuilder.toString();
         
         try {

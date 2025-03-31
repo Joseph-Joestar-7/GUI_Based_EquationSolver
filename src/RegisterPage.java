@@ -1,4 +1,3 @@
-// Register Page: Allows the user to enter username, email, and password.
 
 import javax.swing.*;
     import java.awt.*;
@@ -40,7 +39,6 @@ public class RegisterPage extends JFrame {
         buttonPanel.add(backButton);
         panel.add(buttonPanel);
 
-        // Navigation actions.
         registerButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dispose();
