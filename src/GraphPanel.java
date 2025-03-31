@@ -1,20 +1,20 @@
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import javax.swing.*;
-
 
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Line2D;
+import java.io.File;
+import java.io.IOException;
 
 public class GraphPanel extends JPanel {
     private Equation equation;
     
-    // Zoom factor: pixels per unit
     private double scale = 40;
-    // Offsets for panning (in pixels)
     private double offsetX = 0;
     private double offsetY = 0;
     
-    // Variables for panning
     private int prevMouseX, prevMouseY;
     
     public GraphPanel(Equation equation) {
@@ -23,7 +23,6 @@ public class GraphPanel extends JPanel {
     }
     
     private void initMouseListeners() {
-        // Panning: track mouse press and drag events.
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -49,6 +48,37 @@ public class GraphPanel extends JPanel {
             repaint();
         });
     }
+
+    public void exportToImage() {
+        int width = getWidth();
+        int height = getHeight();
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = image.createGraphics();
+        paintComponent(g2);
+    
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Save Graph As");
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("PNG Image", "png"));
+        
+        int userSelection = fileChooser.showSaveDialog(this);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            
+            if (!fileToSave.getName().toLowerCase().endsWith(".png")) {
+                fileToSave = new File(fileToSave.getAbsolutePath() + ".png");
+            }
+    
+            try {
+                ImageIO.write(image, "PNG", fileToSave);
+                System.out.println("Image saved as " + fileToSave.getAbsolutePath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                g2.dispose();
+            }
+        }
+    }
+    
     
     @Override
     protected void paintComponent(Graphics g) {
