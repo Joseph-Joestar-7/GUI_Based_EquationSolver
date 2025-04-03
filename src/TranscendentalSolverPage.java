@@ -1,14 +1,19 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TranscendentalSolverPage extends JFrame {
-    private JTextField equationField, xMinField, xMaxField, stepField, tolField;
+    private JTextField xMinField, xMaxField, stepField, tolField;
     private JButton solveButton, backButton, plotGraphButton;
-    private JComboBox<String> methodBox;
+    private JComboBox<String> methodBox, equationBox;
     private JTextArea outputArea;
+    private int userId; 
 
-    public TranscendentalSolverPage() {
+    public TranscendentalSolverPage(int userId) {
+        this.userId = userId;
+        
         setTitle("Transcendental Equation Solver");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(750, 550);
@@ -23,37 +28,42 @@ public class TranscendentalSolverPage extends JFrame {
 
         gbc.gridx = 0; gbc.gridy = 0;
         topPanel.add(new JLabel("f(x):"), gbc);
-        equationField = new JTextField("3*x^3 + 10*x^2 + 10*x + 7", 25);
+        
+        String[] historyEquations = fetchEquationHistory();
+        equationBox = new JComboBox<>(historyEquations);
+        equationBox.setEditable(true);
+        equationBox.setPreferredSize(new Dimension(350, 35)); 
+        equationBox.setSelectedItem("");
         gbc.gridx = 1;
-        topPanel.add(equationField, gbc);
+        topPanel.add(equationBox, gbc);
 
         gbc.gridx = 0; gbc.gridy = 1;
         topPanel.add(new JLabel("x_min:"), gbc);
-        xMinField = new JTextField("-10", 10);
+        xMinField = new JTextField("-10", 20);
         gbc.gridx = 1;
         topPanel.add(xMinField, gbc);
 
         gbc.gridx = 0; gbc.gridy = 2;
         topPanel.add(new JLabel("x_max:"), gbc);
-        xMaxField = new JTextField("10", 10);
+        xMaxField = new JTextField("10", 20);
         gbc.gridx = 1;
         topPanel.add(xMaxField, gbc);
 
         gbc.gridx = 0; gbc.gridy = 3;
         topPanel.add(new JLabel("Step:"), gbc);
-        stepField = new JTextField("0.1", 10);
+        stepField = new JTextField("0.1", 20);
         gbc.gridx = 1;
         topPanel.add(stepField, gbc);
 
         gbc.gridx = 0; gbc.gridy = 4;
         topPanel.add(new JLabel("Tolerance:"), gbc);
-        tolField = new JTextField("1e-6", 10);
+        tolField = new JTextField("1e-6", 20);
         gbc.gridx = 1;
         topPanel.add(tolField, gbc);
 
         gbc.gridx = 0; gbc.gridy = 5;
         topPanel.add(new JLabel("Select Method:"), gbc);
-        methodBox = new JComboBox<>(new String[] {"Bisection", "Regula Falsi", "Newton-Raphson"});
+        methodBox = new JComboBox<>(new String[]{"Bisection", "Regula Falsi", "Newton-Raphson"});
         gbc.gridx = 1;
         topPanel.add(methodBox, gbc);
 
@@ -64,6 +74,9 @@ public class TranscendentalSolverPage extends JFrame {
         solveButton = new JButton("Solve");
         backButton = new JButton("Back");
         plotGraphButton = new JButton("Plot Graph");
+        solveButton.setFont(new Font("JetBrains Mono", Font.PLAIN, 14));
+        backButton.setFont(new Font("JetBrains Mono", Font.PLAIN, 14));
+        plotGraphButton.setFont(new Font("JetBrains Mono", Font.PLAIN, 14));
         buttonPanel.add(solveButton);
         buttonPanel.add(plotGraphButton);
         buttonPanel.add(backButton);
@@ -71,78 +84,137 @@ public class TranscendentalSolverPage extends JFrame {
 
         outputArea = new JTextArea(15, 60);
         outputArea.setEditable(false);
-        outputArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
+        outputArea.setFont(new Font("JetBrains Mono", Font.PLAIN, 14));
         JScrollPane scrollPane = new JScrollPane(outputArea);
         bottomPanel.add(scrollPane, BorderLayout.CENTER);
 
         add(bottomPanel, BorderLayout.CENTER);
 
-        solveButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                solveTranscendentalEquation();
-            }
-        });
-
-        plotGraphButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                String expr = equationField.getText().trim();
-                String params = xMinField.getText().trim() + " " +
-                                xMaxField.getText().trim() + " " +
-                                stepField.getText().trim() + " " +
-                                tolField.getText().trim();
-                String input = expr + "\n" + params;
-                try {
-                    Equation eq = EquationFactory.createEquation("transcendental", input);
-                    if (!(eq instanceof TranscendentalEquation)) {
-                        outputArea.setText("Parsed equation is not a TranscendentalEquation.");
-                        return;
-                    }
-                    GraphWindow graphWindow = new GraphWindow(eq);
-                    graphWindow.setVisible(true);
-                } catch (EquationParseException ex) {
-                    outputArea.setText("Parse Error: " + ex.getMessage());
-                } catch (Exception ex) {
-                    outputArea.setText("Error: " + ex.getMessage());
-                }
-            }
-        });
-
-        backButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                dispose();
-                new MainPage(); 
-            }
+        solveButton.addActionListener(e -> solveTranscendentalEquation());
+        plotGraphButton.addActionListener(e -> plotGraph());
+        backButton.addActionListener(e -> {
+            dispose();
+            new MainPage();
         });
 
         setVisible(true);
     }
 
+    private String[] fetchEquationHistory() {
+        List<String> history = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection()){
+            PreparedStatement ps = conn.prepareStatement(
+                "SELECT DISTINCT equation FROM history WHERE user_id = ? ORDER BY id DESC LIMIT 10"
+            );
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                history.add(rs.getString("equation"));
+            }
+            rs.close();
+            ps.close();
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+        }
+        return history.toArray(new String[0]);
+    }
+
+    private void saveEquation(String equation) {
+        try (Connection conn = DBConnection.getConnection()){
+            PreparedStatement checkStmt = conn.prepareStatement(
+                "SELECT 1 FROM history WHERE user_id = ? AND equation = ?"
+            );
+            checkStmt.setInt(1, userId);
+            checkStmt.setString(2, equation);
+            ResultSet rs = checkStmt.executeQuery();
+            if (rs.next()) {
+                rs.close();
+                checkStmt.close();
+                return;
+            }
+            rs.close();
+            checkStmt.close();
+            
+            PreparedStatement ps = conn.prepareStatement(
+                "INSERT INTO history (user_id, equation) VALUES (?, ?)"
+            );
+            ps.setInt(1, userId);
+            ps.setString(2, equation);
+            ps.executeUpdate();
+            ps.close();
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     private void solveTranscendentalEquation() {
-        String expr = equationField.getText().trim();
+        String expr = (String) equationBox.getSelectedItem();
+        if (expr == null || expr.trim().isEmpty()) {
+            outputArea.setText("Please enter a function f(x).");
+            return;
+        }
+
         String params = xMinField.getText().trim() + " " +
                         xMaxField.getText().trim() + " " +
                         stepField.getText().trim() + " " +
                         tolField.getText().trim();
         String input = expr + "\n" + params;
+
         try {
             Equation eq = EquationFactory.createEquation("transcendental", input);
             if (!(eq instanceof TranscendentalEquation)) {
                 outputArea.setText("Parsed equation is not a TranscendentalEquation.");
                 return;
             }
+
             TranscendentalEquation tEq = (TranscendentalEquation) eq;
             String method = (String) methodBox.getSelectedItem();
             EquationResult result;
-            if (method.equalsIgnoreCase("Bisection")) {
-                result = tEq.solveBisection();
-            } else if (method.equalsIgnoreCase("Regula Falsi")) {
-                result = tEq.solveRegulaFalsi();
-            } else if (method.equalsIgnoreCase("Newton-Raphson")) {
-                result = tEq.solveNewtonRaphson();
-            } else {
-                result = new EquationResult("Unknown method selected.");
+
+            switch (method.toLowerCase()) {
+                case "bisection":
+                    result = tEq.solveBisection();
+                    break;
+                case "regula falsi":
+                    result = tEq.solveRegulaFalsi();
+                    break;
+                case "newton-raphson":
+                    result = tEq.solveNewtonRaphson();
+                    break;
+                default:
+                    result = new EquationResult("Unknown method selected.");
             }
+
             outputArea.setText(result.toString());
+            saveEquation(expr); 
+        } catch (EquationParseException ex) {
+            outputArea.setText("Parse Error: " + ex.getMessage());
+        } catch (Exception ex) {
+            outputArea.setText("Error: " + ex.getMessage());
+        }
+    }
+
+    private void plotGraph() {
+        String expr = (String) equationBox.getSelectedItem();
+        if (expr == null || expr.trim().isEmpty()) {
+            outputArea.setText("Please enter a function f(x) to plot.");
+            return;
+        }
+
+        String params = xMinField.getText().trim() + " " +
+                        xMaxField.getText().trim() + " " +
+                        stepField.getText().trim() + " " +
+                        tolField.getText().trim();
+        String input = expr + "\n" + params;
+
+        try {
+            Equation eq = EquationFactory.createEquation("transcendental", input);
+            if (!(eq instanceof TranscendentalEquation)) {
+                outputArea.setText("Parsed equation is not a TranscendentalEquation.");
+                return;
+            }
+            GraphWindow graphWindow = new GraphWindow(eq);
+            graphWindow.setVisible(true);
         } catch (EquationParseException ex) {
             outputArea.setText("Parse Error: " + ex.getMessage());
         } catch (Exception ex) {

@@ -51,8 +51,9 @@ public class TranscendentalEquation extends Equation {
         if (!found) {
             return new EquationResult("No sign change found in the given interval.");
         }
-        sb.append(String.format("Automatically chosen interval: [%.6f, %.6f]\n", a, b));
+        sb.append(String.format("Automatically chosen interval: [%.6f, %.6f]\n\n", a, b));
         sb.append(String.format("%-12s %-12s %-12s %-15s %-15s\n", "Iteration", "a", "b", "x=(a+b)/2", "f(x)"));
+        sb.append("-------------------------------------------------------------------\n");
         int iterations = 0;
         while (Math.abs(b - a) > tol && iterations < maxIter) {
             double c = (a + b) / 2;
@@ -69,7 +70,7 @@ public class TranscendentalEquation extends Equation {
             iterations++;
         }
         sb.append(String.format("\nRoot of the equation = %.6f\n", a));
-        sb.append("Iterations: " + iterations);
+        sb.append("\nIterations: " + iterations);
         return new EquationResult(sb.toString());
     }
 
@@ -97,9 +98,10 @@ public class TranscendentalEquation extends Equation {
         int iterations = 0;
         double c = 0;
         
-        sb.append(String.format("Automatically chosen interval: [%.6f, %.6f]\n", a, b));
+        sb.append(String.format("Automatically chosen interval: [%.6f, %.6f]\n\n", a, b));
         sb.append(String.format("%-12s %-12s %-12s %-12s %-12s %-12s\n", 
                     "Iteration", "a", "b", "h", "c", "f(c)"));
+        sb.append("--------------------------------------------------------------------------\n");
         
         while (iterations < maxIter) {
             double h = ((b - a) * Math.abs(fa)) / (Math.abs(fa) + Math.abs(fb));
@@ -123,7 +125,7 @@ public class TranscendentalEquation extends Equation {
             iterations++;
         }
         
-        sb.append(String.format("\nRegula Falsi Method: Root ≈ %.6f, Iterations: %d", c, iterations));
+        sb.append(String.format("\nRegula Falsi Method : Root = %.6f \nIterations: %d", c, iterations));
         return new EquationResult(sb.toString());
     }
     
@@ -144,9 +146,10 @@ public class TranscendentalEquation extends Equation {
         }
         
         double x0 = (aInterval + bInterval) / 2;
-        sb.append(String.format("Initial guess based on sign change: %.6f\n", x0));
+        sb.append(String.format("Initial guess based on sign change : %.6f\n\n", x0));
         
         sb.append(String.format("%-12s %-12s %-12s %-12s %-12s\n", "Iteration", "x0", "f(x0)", "h", "x1"));
+        sb.append("----------------------------------------------------------------\n");
         
         int iterations = 0;
         double x1 = x0;
@@ -169,7 +172,7 @@ public class TranscendentalEquation extends Equation {
             iterations++;
         }
         
-        sb.append(String.format("\nNewton-Raphson Method: Root ≈ %.6f, Iterations: %d", x1, iterations));
+        sb.append(String.format("\nNewton-Raphson Method: Root = %.6f \nIterations: %d", x1, iterations));
         return new EquationResult(sb.toString());
     }
          

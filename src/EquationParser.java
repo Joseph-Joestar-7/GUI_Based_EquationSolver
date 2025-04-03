@@ -63,6 +63,9 @@ public class EquationParser {
     }
 
     public static Equation parseMatrixEquation(String input) throws EquationParseException {
+
+        System.out.println(input);
+
         String[] lines = input.split("\\n");
         if (lines.length < 2) {
             throw new EquationParseException("Matrix equation input must contain two lines: first for matrix A and second for vector B.");
