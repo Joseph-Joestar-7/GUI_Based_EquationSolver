@@ -1,10 +1,18 @@
 import javax.swing.*;
 import java.awt.*;    
 import java.awt.event.*;
-
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SolverPage extends JFrame {
-    public SolverPage(String equationType) {
+    public int userId; 
+    public String equationType;
+    
+    public SolverPage(String equationType, int userId) {
+        this.equationType = equationType;
+        this.userId = userId;
+        
         setTitle(equationType + " Equation Solver");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 400);
@@ -20,8 +28,12 @@ public class SolverPage extends JFrame {
         panel.add(promptLabel);
         panel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        JTextField equationInput = new JTextField();
+        String[] historyEquations = fetchEquationHistory();
+        JComboBox<String> equationInput = new JComboBox<>(historyEquations);
+        equationInput.setEditable(true);
         equationInput.setMaximumSize(new Dimension(500, 30));
+
+        equationInput.setSelectedItem("");
         panel.add(equationInput);
         panel.add(Box.createRigidArea(new Dimension(0, 20)));
 
@@ -58,7 +70,12 @@ public class SolverPage extends JFrame {
 
         solveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String input = equationInput.getText();
+                String input = ((String) equationInput.getSelectedItem()).trim();
+                if (input == null || input.isEmpty()) {
+                    JOptionPane.showMessageDialog(SolverPage.this, "Please enter an equation.");
+                    return;
+                }
+                saveEquationHistory(userId, input);
                 try {
                     Equation eq = EquationFactory.createEquation(equationType, input);
                     EquationResult result = eq.solve();
@@ -73,7 +90,7 @@ public class SolverPage extends JFrame {
 
         plotGraphButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String input = equationInput.getText();
+                String input = ((String) equationInput.getSelectedItem()).trim();
                 try {
                     if ("Matrix".equalsIgnoreCase(equationType)) {
                         JOptionPane.showMessageDialog(SolverPage.this,
@@ -108,5 +125,52 @@ public class SolverPage extends JFrame {
 
         add(panel);
         setVisible(true);
+    }
+
+    private String[] fetchEquationHistory() {
+        List<String> history = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection()){
+            PreparedStatement ps = conn.prepareStatement(
+                "SELECT DISTINCT equation FROM history WHERE user_id = ? ORDER BY id DESC LIMIT 10"
+            );
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                history.add(rs.getString("equation"));
+            }
+            rs.close();
+            ps.close();
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+        }
+        return history.toArray(new String[0]);
+    }
+
+    private void saveEquationHistory(int userId, String equation) {
+        try (Connection conn = DBConnection.getConnection()){
+            PreparedStatement checkStmt = conn.prepareStatement(
+                "SELECT 1 FROM history WHERE user_id = ? AND equation = ?"
+            );
+            checkStmt.setInt(1, userId);
+            checkStmt.setString(2, equation);
+            ResultSet rs = checkStmt.executeQuery();
+            if (rs.next()) {
+                rs.close();
+                checkStmt.close();
+                return;
+            }
+            rs.close();
+            checkStmt.close();
+            
+            PreparedStatement ps = conn.prepareStatement(
+                "INSERT INTO history (user_id, equation) VALUES (?, ?)"
+            );
+            ps.setInt(1, userId);
+            ps.setString(2, equation);
+            ps.executeUpdate();
+            ps.close();
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 }

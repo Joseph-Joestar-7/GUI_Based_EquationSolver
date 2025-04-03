@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -12,6 +13,7 @@ public class GraphWindow extends JFrame {
         add(graphPanel);
 
         JButton exportButton = new JButton("Export Graph");
+        exportButton.setFont(new Font("JetBrains Mono", Font.PLAIN, 14));
         exportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
