@@ -26,7 +26,7 @@ public class SplashScreenW extends JFrame {
         tryItNowButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new MainPage();
+                new LoginPage();
             }
         });
 

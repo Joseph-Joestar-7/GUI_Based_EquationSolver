@@ -26,6 +26,7 @@ public class MatrixSolverPage extends JFrame {
         nField = new JTextField(5);
         topPanel.add(nField);
         createFieldsButton = new JButton("Create Matrix Fields");
+        createFieldsButton.setFont(new Font("JetBrains Mono", Font.PLAIN, 10));
         topPanel.add(createFieldsButton);
         add(topPanel, BorderLayout.NORTH);
 
@@ -43,15 +44,17 @@ public class MatrixSolverPage extends JFrame {
         
         solveButton = new JButton("Solve");
         solveButton.setEnabled(false);
+        solveButton.setFont(new Font("JetBrains Mono", Font.PLAIN, 14));
         buttonPanel.add(solveButton);
         
         backButton = new JButton("Back");
+        backButton.setFont(new Font("JetBrains Mono", Font.PLAIN, 14));
         buttonPanel.add(backButton);
         bottomPanel.add(buttonPanel, BorderLayout.NORTH);
 
         outputArea = new JTextArea(15, 60);
         outputArea.setEditable(false);
-        outputArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
+        outputArea.setFont(new Font("JetBrains Mono", Font.PLAIN, 14));
         JScrollPane outputScrollPane = new JScrollPane(outputArea);
         bottomPanel.add(outputScrollPane, BorderLayout.CENTER);
         add(bottomPanel, BorderLayout.SOUTH);
